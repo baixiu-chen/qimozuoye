@@ -2,16 +2,16 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "d233d539-9658-4910-95c9-164d6be99194",
+   "id": "2ca08fd4-c508-4351-9c79-1d48af79669f",
    "metadata": {},
    "source": [
-    "大语言模型LLM的调用结合streamlit, 做网页开发"
+    "记账本网站搭建"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": null,
-   "id": "b31484e4-6a2c-4019-ae58-3d92fbac0354",
+   "id": "ae3373ad-6aeb-4229-b621-62e17039d66a",
    "metadata": {},
    "outputs": [],
    "source": [
@@ -25,8 +25,8 @@
     "\n",
     "# 构造 client\n",
     "client = OpenAI(\n",
-    "    api_key=\"sk-GICOS0zZPVnAHNCm66FgyXbkGtVXxvEeEptgaDFDwl6O8ia3\",  # 填写自己的混元 APIKey\n",
-    "    base_url=\"https://api.hunyuan.cloud.tencent.com/v1\",  # 混元 endpoint\n",
+    "    api_key=st.secrets[\"HUNYUAN_API_KEY\"],  # 从 secrets.toml 读取密钥\n",
+    "    base_url=\"https://api.hunyuan.cloud.tencent.com/v1\",\n",
     ")\n",
     "\n",
     "# 设置页面\n",
@@ -49,7 +49,6 @@
     "    is_finance = st.checkbox(\"是否理财\")\n",
     "    is_accounting = st.checkbox(\"是否记账\")\n",
     "    \n",
-    "    # 月光分析按钮\n",
     "    if st.button(\"生成月光分析报告\"):\n",
     "        analyze_moonlight()\n",
     "\n",
@@ -125,8 +124,6 @@
     "# 月光分析函数\n",
     "def analyze_moonlight():\n",
     "    st.sidebar.success(\"分析完成！\")\n",
-    "    \n",
-    "    # 生成分析结论\n",
     "    conclusion = f\"\"\"\n",
     "    ### 月光行为分析报告（基于您的画像）\n",
     "    - **基本特征**：{age}岁 {gender}性 {major}专业\n",
@@ -156,18 +153,19 @@
     "        mime=\"text/csv\"\n",
     "    )\n",
     "\n",
-    "completion = client.chat.completions.create(\n",
-    "    model=\"hunyuan-turbos-latest\",\n",
-    "    messages=[\n",
+    "# 调用混元API（示例）\n",
+    "try:\n",
+    "    completion = client.chat.completions.create(\n",
+    "        model=\"hunyuan-turbos-latest\",\n",
+    "        messages=[\n",
     "            {\"role\": \"system\", \"content\": \"### 定位：语义歧视分析专家\\n ### 任务：请对用户输入的句子进行歧视性分析，并用 1 到 5 之间的数字表示其歧视程度。1 表示没有歧视，5 表示极为歧视。\\n ###输出 ：只输出数字，不需要额外解释。\"},\n",
     "            {\"role\": \"user\", \"content\": \"你今天做的事情比猪还蠢\"}\n",
     "        ],\n",
-    "    extra_body={\n",
-    "        \"enable_enhancement\": True,  # <- 自定义参数\n",
-    "    },\n",
-    ")\n",
-    "print(completion)\n",
-    "print(completion.choices[0].message.content)"
+    "        extra_body={\"enable_enhancement\": True},\n",
+    "    )\n",
+    "    print(completion.choices[0].message.content)\n",
+    "except Exception as e:\n",
+    "    st.error(f\"API调用失败: {e}\")"
    ]
   }
  ],
