@@ -3,17 +3,13 @@
   {
    "cell_type": "markdown",
    "id": "2ca08fd4-c508-4351-9c79-1d48af79669f",
-   "metadata": {},
    "source": [
     "记账本网站搭建"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "id": "ae3373ad-6aeb-4229-b621-62e17039d66a",
-   "metadata": {},
-   "outputs": [],
    "source": [
     "import pandas as pd\n",
     "import matplotlib.pyplot as plt\n",
